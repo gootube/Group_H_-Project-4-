@@ -49,9 +49,9 @@ def gacode(post,pre,az,al):
 
     pcsumxy=matrix_y*matrix_x-3
 
-    generations=int(20)
+    generations=20
 
-    populations=int(30)
+    populations=30
 
     rang = int(100)
 
@@ -74,7 +74,7 @@ def gacode(post,pre,az,al):
 
             # each crossover supplies two new chromosomes
             for j in range(18,20):
-                delta[:,:,i]=np.random.rand(matrix_y,matrix_x)*rang*2-rang 
+                delta[:,:,j]=np.random.rand(matrix_y,matrix_x)*rang*2-rang 
 
             #each crossover produces two new chromosomes
             while(pctime < 5):
@@ -165,6 +165,8 @@ def gacode(post,pre,az,al):
 
         
         best[i]=np.max(F)
+        if i%10000==0:
+            print(i)
 
 
     bestrange=delta[:,:,1]
@@ -263,11 +265,12 @@ def gacode(post,pre,az,al):
     imageio.imwrite("estimate-result.png",best_h)
 
     error=(abs(volume_true_del-volume_estimate_del)/volume_true_del)*100
-    row=[generations,volume_estimate_del,error]
+    error1= 100- corr2(best_h,new_h)*100
+    row=[generations,volume_estimate_del,error1]
     change=predtm-postdtm
 
     with open('data.csv', 'a') as csvFile:
         writer = csv.writer(csvFile)
         writer.writerow(row)
     csvFile.close()
-    return(volume_estimate_del,error,change)
+    return(volume_estimate_del,error1,change)
